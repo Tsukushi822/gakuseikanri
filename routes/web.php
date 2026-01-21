@@ -14,7 +14,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MenuController;
-use App\Http\Controllers\StudentController;
 use App\Http\Controllers\GradeCreateController;
 use App\Http\Controllers\GradeEditController;
 use App\Http\Controllers\GradeStoreController;
@@ -67,12 +66,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/students/{id}', StudentShowController::class)
             ->name('students.show');
     
-    Route::post('/students/upgrade-grade', [StudentController::class, 'upgradeGrade'])
-            ->name('students.upgradeGrade');
-    
-    Route::post('/students/grade-up', [StudentController::class, 'gradeUp'])
-            ->name('students.gradeUp');
-
     Route::get('/students/{id}/edit', StudentEditController::class)
             ->name('students.edit');
     
