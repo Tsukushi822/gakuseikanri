@@ -27,6 +27,11 @@ class StudentIndexController extends Controller
             ->orderBy('grade')
             ->pluck('grade');
 
+        if ($request->ajax()) {
+                return view('students.partials.list', compact('students'));
+            }
+            
+
         return view('students.index', compact('students', 'grades'));
     }
     

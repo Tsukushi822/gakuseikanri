@@ -57,65 +57,58 @@
 
     <h2>成績検索</h2>
 
-<form method="GET" action="{{ route('students.show', $student->id) }}">
-    <label>学年：</label>
-    <select name="grade">
-        <option value="">-- 全学年 --</option>
-        <option value="1" {{ request('grade') == 1 ? 'selected' : '' }}>1年</option>
-        <option value="2" {{ request('grade') == 2 ? 'selected' : '' }}>2年</option>
-        <option value="3" {{ request('grade') == 3 ? 'selected' : '' }}>3年</option>
-        <option value="4" {{ request('grade') == 4 ? 'selected' : '' }}>4年</option>
-    </select>
+        <form id="grade-search-form" >
+            <input type="hidden" name="student_id" value="{{ $student->id }}">
 
-    <label>学期：</label>
-    <select name="semester">
-        <option value="">-- 全学期 --</option>
-        <option value="1" {{ request('semester') == 1 ? 'selected' : '' }}>1学期</option>
-        <option value="2" {{ request('semester') == 2 ? 'selected' : '' }}>2学期</option>
-        <option value="3" {{ request('semester') == 3 ? 'selected' : '' }}>3学期</option>
-    </select>
+            <label>学年：
+                <select name="grade_year">
+                    <option value="">すべて</option>
+                    <option value="1">1年</option>
+                    <option value="2">2年</option>
+                    <option value="3">3年</option>
+                </select>
+            </label>
 
-    <button type="submit">検索</button>
-</form>
+            <label>学期：
+                <select name="semester">
+                    <option value="">すべて</option>
+                    <option value="1">1学期</option>
+                    <option value="2">2学期</option>
+                    <option value="3">3学期</option>
+
+                </select>
+            </label>
+
+            <button type="submit">検索</button>
+        </form>
+
 
 <hr>
 
 <h2>成績一覧</h2>
 
-<table border="1" cellpadding="5">
-    <tr>
-        <th>学年</th>
-        <th>学期</th>
-        <th>科目</th>
-        <th>点数</th>
-        <th>編集</th>
-    </tr>
+<div id="grade-list" data-student-id="{{ $student->id }}">
+@include('grades.partials.matrix')
+</div>
 
-        @foreach ($gradesYears as $gradeYear)
-        @foreach ($semesters as $semester)
-            @foreach ($subjects as $subject)
-                @php
-                    $grade = $gradesMap[$gradeYear][$semester][$subject->id] ?? null;
-                @endphp
-                <tr>
-                    <td>{{ $gradeYear }}年</td>
-                    <td>{{ $semester }}学期</td>
-                    <td>{{ $subject->name }}</td>
-                    <td>{{ $grade->score ?? '―' }}</td>
-                    <td>
-                        @if ($grade)
-                        <a href="{{ route('grades.edit', $grade->id) }}">
-                                成績編集
-                            </a>
-                        @else
-                            ―
-                        @endif
-                    </td>
-                </tr>
-            @endforeach
-        @endforeach
-    @endforeach
-    </table>
+<script>
+document.getElementById('grade-search-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const form = this;
+    const params = new URLSearchParams(new FormData(form));
+
+    const studentId = document
+        .getElementById('grade-list')
+        .dataset.studentId;
+
+    fetch(`/students/${studentId}/grades/search?` + params.toString())
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('grade-list').innerHTML = html;
+        });
+});
+</script>
 
 
 </body>

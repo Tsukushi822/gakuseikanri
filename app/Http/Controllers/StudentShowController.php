@@ -11,35 +11,31 @@ use Illuminate\Http\Request;
 class StudentShowController extends Controller
 {
     
-    public function __invoke(Request $request, $id)
+    public function __invoke($id)
     {
+        
         $student = Student::findOrFail($id);
 
-        $gradesYears = [1, 2, 3, 4];
-        if ($request->filled('grade')) {
-            $gradesYears = [(int)$request->grade];
-        }
+    $grades = Grade::with('subject')
+        ->where('student_id', $id)
+        ->get();
 
-        $semesters = [1, 2, 3];
-        if ($request->filled('semester')) {
-            $semesters = [(int)$request->semester];
-        }
+    $gradeYears = [1, 2, 3];
+    $semesters  = [1, 2, 3];
+    $subjects   = Subject::orderBy('id')->get();
 
-        $subjects = Subject::all();
+    $gradesMap = [];
+    foreach ($grades as $grade) {
+        $gradesMap[$grade->grade][$grade->semester][$grade->subject_id] = $grade;
+    }
 
-        $grades = Grade::where('student_id', $student->id)->get();
-
-        $gradesMap = [];
-        foreach ($grades as $grade) {
-            $gradesMap[$grade->grade][$grade->semester][$grade->subject_id] = $grade;
-        }
-
-        return view('students.show', compact(
-            'student',
-            'subjects',
-            'gradesYears',
-            'semesters',
-            'gradesMap'
-        ));
+    return view('students.show', compact(
+        'student',
+        'gradeYears',
+        'semesters',
+        'subjects',
+        'gradesMap'
+    ));
+        
     }
 }

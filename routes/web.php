@@ -27,6 +27,8 @@ use App\Http\Controllers\StudentUpdateController;
 use App\Http\Controllers\StudentDestroyController;
 use App\Http\Controllers\StudentGradeUpController;
 use App\Http\Controllers\StudentUpgradeGradeController;
+use App\Http\Controllers\StudentSearchController;
+use App\Http\Controllers\GradeSearchController;
 
 
 
@@ -47,8 +49,6 @@ Route::get('/', function () {
 });
 
 
-
-
 Route::middleware('auth')->group(function () {
 
     Route::get('/menu', [MenuController::class, 'index'])
@@ -56,6 +56,10 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/students', StudentIndexController::class)
             ->name('students.index');
+
+    Route::get('/students/search', StudentSearchController::class)
+            ->name('students.search');
+
     
     Route::get('/students/create', StudentCreateController::class)
             ->name('students.create');
@@ -92,5 +96,15 @@ Route::middleware('auth')->group(function () {
         
     Route::post('/students/upgrade-grade', StudentUpgradeGradeController::class)
             ->name('students.upgradeGrade');
+
+    Route::get('/students/{id}/grades/search',GradeSearchController::class)
+        ->name('grades.search');
+
         
     });
+
+
+
+
+    
+
